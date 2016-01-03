@@ -5,6 +5,47 @@ TopDownGame.Game = function(){};
 
 TopDownGame.Game.prototype = {
   create: function() {
+    
+    var sprite = new PIXI.Sprite();
+
+    //swipe logic vars
+    var swipeCoordX,
+    swipeCoordY,
+    swipeCoordX2,
+    swipeCoordY2,
+    swipeMinDistance = 50;
+
+    //swipe logic check when tap starts
+    this.game.input.onDown.add(function(pointer) {
+        swipeCoordX = pointer.clientX;
+        swipeCoordY = pointer.clientY;   
+        console.log("pointer down"); 
+    }, this);
+
+    //swipe logic check when tap starts
+    this.game.input.onTap.add(function(pointer) {
+      console.log(pointer.clientX);   
+    }, this);
+
+    //swipe logic check when tap ends
+    this.game.input.onUp.add(function(pointer) {
+        swipeCoordX2 = pointer.clientX;
+        swipeCoordY2 = pointer.clientY;
+
+        console.log("pointer up"); 
+
+        if(swipeCoordX2 < swipeCoordX - swipeMinDistance){
+            console.log("left");
+        }else if(swipeCoordX2 > swipeCoordX + swipeMinDistance){
+            console.log("right");
+        }else if(swipeCoordY2 < swipeCoordY - swipeMinDistance){
+            console.log("up");
+        }else if(swipeCoordY2 > swipeCoordY + swipeMinDistance){
+            console.log("down");
+        }
+    })
+
+
     this.map = this.game.add.tilemap('level1');
 
     //the first parameter is the tileset name as specified in Tiled, the second is the key to the asset
@@ -15,7 +56,7 @@ TopDownGame.Game.prototype = {
     this.blockedLayer = this.map.createLayer('blockedLayer');
 
     //collision on blockedLayer
-    this.map.setCollisionBetween(1, 100000, true, 'blockedLayer');
+    this.map.setCollisionBetween(1, 2000, true, 'blockedLayer');
 
     //resizes the game world to match the layer dimensions
     this.backgroundlayer.resizeWorld();
@@ -86,14 +127,19 @@ TopDownGame.Game.prototype = {
     this.game.physics.arcade.overlap(this.player, this.doors, this.enterDoor, null, this);
 
     //player movement
-    this.player.body.velocity.y = 0;
+    
     this.player.body.velocity.x = 0;
 
     if(this.cursors.up.isDown) {
+      if(this.player.body.velocity.y == 0)
       this.player.body.velocity.y -= 50;
     }
     else if(this.cursors.down.isDown) {
+      if(this.player.body.velocity.y == 0)
       this.player.body.velocity.y += 50;
+    }
+    else {
+      this.player.body.velocity.y = 0;
     }
     if(this.cursors.left.isDown) {
       this.player.body.velocity.x -= 50;
@@ -101,6 +147,8 @@ TopDownGame.Game.prototype = {
     else if(this.cursors.right.isDown) {
       this.player.body.velocity.x += 50;
     }
+
+
   },
   collect: function(player, collectable) {
     console.log('yummy!');
