@@ -81,9 +81,6 @@ TopDownGame.Game.prototype = {
 
     var emitterContainer = this.game.add.group();
 
-    emitterContainer.update = function(){}
-    emitterContainer.postUpdate = function(){}
-
     // Create a new emitter
     this.emitter = new cloudkid.Emitter(
 
@@ -93,65 +90,69 @@ TopDownGame.Game.prototype = {
       emitterContainer,
 
       // The collection of particle images to use
-      ["smokeparticle"],
+      ["particle1", "fireparticle"],
 
         // Emitter configuration, edit this to change the look
         // of the emitter
-       {
+      {
         "alpha": {
-          "start": 0.4,
+          "start": 0.62,
           "end": 0
         },
         "scale": {
-          "start": 2,
-          "end": 0.4,
+          "start": 0.1,
+          "end": 0.3,
           "minimumScaleMultiplier": 1
         },
         "color": {
-          "start": "#6bff61",
-          "end": "#d8ff4a"
+          "start": "#fff191",
+          "end": "#ff622c"
         },
         "speed": {
-          "start": 10,
-          "end": 10
+          "start": 200,
+          "end": 200
         },
         "acceleration": {
           "x": 0,
           "y": 0
         },
         "startRotation": {
-          "min": 0,
-          "max": 360
+          "min": 265,
+          "max": 275
         },
         "rotationSpeed": {
-          "min": 0,
-          "max": 0
+          "min": 50,
+          "max": 50
         },
         "lifetime": {
-          "min": 2,
-          "max": 1.8
+          "min": 0.1,
+          "max": 0.3
         },
-        "blendMode": "screen",
-        "frequency": 0.01,
+        "blendMode": "normal",
+        "frequency": 0.007,
         "emitterLifetime": -1,
-        "maxParticles": 1000,
+        "maxParticles": 50,
         "pos": {
-          "x": 0.5,
-          "y": 0.5
+          "x": 0,
+          "y": 0
         },
-        "addAtBack": true,
+        "addAtBack": false,
         "spawnType": "circle",
         "spawnCircle": {
           "x": 0,
           "y": 0,
-          "r": 150
+          "r": 1
         }
       },
       this.game
     );
+    
+    emitterContainer.update = function() {
+      this.emitter.update(this.game.time.elapsed);
+    }.bind(this);
+    emitterContainer.postUpdate = function(){}
 
-
-    this.emitter.updateOwnerPos(11, 11);
+    this.emitter.updateOwnerPos(100, 300);
 
   },
   createItems: function() {
@@ -208,9 +209,6 @@ TopDownGame.Game.prototype = {
       });
   },
   update: function() {
-
-    this.emitter.update(this.game.time.elapsed)
-
     //collision
     this.game.physics.arcade.collide(this.player, this.blockedLayer);
     this.game.physics.arcade.overlap(this.player, this.items, this.collect, null, this);
