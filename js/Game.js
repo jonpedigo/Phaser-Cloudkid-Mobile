@@ -6,8 +6,6 @@ TopDownGame.Game = function(){};
 TopDownGame.Game.prototype = {
   create: function() {
     
-    var sprite = new PIXI.Sprite();
-
     //swipe logic vars
     var swipeCoordX,
     swipeCoordY,
@@ -62,6 +60,8 @@ TopDownGame.Game.prototype = {
     this.backgroundlayer.resizeWorld();
 
     this.createItems();
+    this.createEmitter();
+    this.emitter.emit = true;
     this.createDoors();    
 
     //create player
@@ -76,11 +76,94 @@ TopDownGame.Game.prototype = {
     this.cursors = this.game.input.keyboard.createCursorKeys();
 
   },
+
+  createEmitter:function(){
+
+    var emitterContainer = this.game.add.group();
+
+    emitterContainer.update = function(){}
+    emitterContainer.postUpdate = function(){}
+
+    // Create a new emitter
+    this.emitter = new cloudkid.Emitter(
+
+      // The DisplayObjectContainer to put the emitter in
+      // if using blend modes, it's important to put this
+      // on top of a bitmap, and not use the PIXI.Stage
+      emitterContainer,
+
+      // The collection of particle images to use
+      ["smokeparticle"],
+
+        // Emitter configuration, edit this to change the look
+        // of the emitter
+       {
+        "alpha": {
+          "start": 0.4,
+          "end": 0
+        },
+        "scale": {
+          "start": 2,
+          "end": 0.4,
+          "minimumScaleMultiplier": 1
+        },
+        "color": {
+          "start": "#6bff61",
+          "end": "#d8ff4a"
+        },
+        "speed": {
+          "start": 10,
+          "end": 10
+        },
+        "acceleration": {
+          "x": 0,
+          "y": 0
+        },
+        "startRotation": {
+          "min": 0,
+          "max": 360
+        },
+        "rotationSpeed": {
+          "min": 0,
+          "max": 0
+        },
+        "lifetime": {
+          "min": 2,
+          "max": 1.8
+        },
+        "blendMode": "screen",
+        "frequency": 0.01,
+        "emitterLifetime": -1,
+        "maxParticles": 1000,
+        "pos": {
+          "x": 0.5,
+          "y": 0.5
+        },
+        "addAtBack": true,
+        "spawnType": "circle",
+        "spawnCircle": {
+          "x": 0,
+          "y": 0,
+          "r": 150
+        }
+      },
+      this.game
+    );
+
+
+    this.emitter.updateOwnerPos(11, 11);
+
+  },
   createItems: function() {
     //create items
     this.items = this.game.add.group();
     this.items.enableBody = true;
     var item;    
+
+    this.items.tag = "items";
+
+    // console.log("items", this.items);
+
     result = this.findObjectsByType('item', this.map, 'objectsLayer');
     result.forEach(function(element){
       this.createFromTiledObject(element, this.items);
@@ -91,6 +174,10 @@ TopDownGame.Game.prototype = {
     this.doors = this.game.add.group();
     this.doors.enableBody = true;
     result = this.findObjectsByType('door', this.map, 'objectsLayer');
+
+    this.doors.tag = "doors";
+
+    // console.log("doors", this.doors);
 
     result.forEach(function(element){
       this.createFromTiledObject(element, this.doors);
@@ -121,13 +208,15 @@ TopDownGame.Game.prototype = {
       });
   },
   update: function() {
+
+    this.emitter.update(this.game.time.elapsed)
+
     //collision
     this.game.physics.arcade.collide(this.player, this.blockedLayer);
     this.game.physics.arcade.overlap(this.player, this.items, this.collect, null, this);
     this.game.physics.arcade.overlap(this.player, this.doors, this.enterDoor, null, this);
 
     //player movement
-    
     this.player.body.velocity.x = 0;
 
     if(this.cursors.up.isDown) {
@@ -147,7 +236,6 @@ TopDownGame.Game.prototype = {
     else if(this.cursors.right.isDown) {
       this.player.body.velocity.x += 50;
     }
-
 
   },
   collect: function(player, collectable) {
