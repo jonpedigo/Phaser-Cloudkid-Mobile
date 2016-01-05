@@ -33,21 +33,29 @@ TopDownGame.Game.prototype = {
         console.log("pointer up"); 
 
         if(swipeCoordX2 < swipeCoordX - swipeMinDistance){
-            console.log("left");
+          console.log("left");
+          this.player.body.velocity.x -= 50;
         }else if(swipeCoordX2 > swipeCoordX + swipeMinDistance){
-            console.log("right");
+          console.log("right");
+          this.player.body.velocity.x += 50;
         }else if(swipeCoordY2 < swipeCoordY - swipeMinDistance){
-            console.log("up");
+          console.log("up");
+          this.player.body.velocity.y -= 50;
         }else if(swipeCoordY2 > swipeCoordY + swipeMinDistance){
-            console.log("down");
+          console.log("down");
+          this.player.body.velocity.y += 50;
         }
-    })
+    }.bind(this))
 
 
     this.map = this.game.add.tilemap('level1');
+    // this.map.tileWidth *= 2;
+    // this.map.tileHeight *= 2;
 
     //the first parameter is the tileset name as specified in Tiled, the second is the key to the asset
     this.map.addTilesetImage('tiles', 'gameTiles');
+
+    console.log(this.map);
 
     //create layer
     this.backgroundlayer = this.map.createLayer('backgroundLayer');
@@ -158,6 +166,7 @@ TopDownGame.Game.prototype = {
   createItems: function() {
     //create items
     this.items = this.game.add.group();
+
     this.items.enableBody = true;
     var item;    
 
@@ -174,6 +183,7 @@ TopDownGame.Game.prototype = {
     //create doors
     this.doors = this.game.add.group();
     this.doors.enableBody = true;
+
     result = this.findObjectsByType('door', this.map, 'objectsLayer');
 
     this.doors.tag = "doors";
@@ -215,7 +225,7 @@ TopDownGame.Game.prototype = {
     this.game.physics.arcade.overlap(this.player, this.doors, this.enterDoor, null, this);
 
     //player movement
-    this.player.body.velocity.x = 0;
+    // this.player.body.velocity.x = 0;
 
     if(this.cursors.up.isDown) {
       if(this.player.body.velocity.y == 0)
@@ -224,9 +234,6 @@ TopDownGame.Game.prototype = {
     else if(this.cursors.down.isDown) {
       if(this.player.body.velocity.y == 0)
       this.player.body.velocity.y += 50;
-    }
-    else {
-      this.player.body.velocity.y = 0;
     }
     if(this.cursors.left.isDown) {
       this.player.body.velocity.x -= 50;

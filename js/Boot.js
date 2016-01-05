@@ -12,18 +12,22 @@ TopDownGame.Boot.prototype = {
     //loading screen will have a white background
     this.game.stage.backgroundColor = '#fff';
 
-    //scaling options
-    this.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
-    
-    //have the game centered horizontally
-    this.scale.pageAlignHorizontally = true;
-    this.scale.pageAlignVertically = true;
 
+    if(navigator.isCocoonJS){
+      this.game.stage.children[0].scale.x = 4;
+      this.game.stage.children[0].scale.y = 4;
+    }else{
+      this.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
+    }
+
+    this.scale.forceOrientation(false, true);
+
+    // this.game.world.scale.x = 2;
+    // this.game.world.scale.y = 2;
     //physics system
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     
     this.state.start('Preload');
-
   }
 };
 

@@ -1,6 +1,9 @@
 var TopDownGame = TopDownGame || {};
 
-TopDownGame.game = new Phaser.Game(160, 160, Phaser.WEBGL, '');
+var width = window.innerWidth;
+    height = window.innerHeight;
+
+TopDownGame.game = new Phaser.Game(width, height, Phaser.WEBGL, '');
 
 TopDownGame.game.state.add('Boot', TopDownGame.Boot);
 TopDownGame.game.state.add('Preload', TopDownGame.Preload);
