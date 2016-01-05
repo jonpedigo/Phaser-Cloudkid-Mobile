@@ -79,6 +79,7 @@ TopDownGame.Game.prototype = {
 
     //the camera will follow the player in the world
     this.game.camera.follow(this.player);
+    // this.game.camera.setPosition(20,100);    
 
     //move player with cursor keys
     this.cursors = this.game.input.keyboard.createCursorKeys();

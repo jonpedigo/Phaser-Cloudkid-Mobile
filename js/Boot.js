@@ -12,18 +12,13 @@ TopDownGame.Boot.prototype = {
     //loading screen will have a white background
     this.game.stage.backgroundColor = '#fff';
 
+    // this.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
 
-    if(navigator.isCocoonJS){
-      this.game.stage.children[0].scale.x = 4;
-      this.game.stage.children[0].scale.y = 4;
-    }else{
-      this.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
-    }
+    this.scale.forceOrientation(true, true);
 
-    this.scale.forceOrientation(false, true);
+    this.game.world.scale.x = 1;
+    this.game.world.scale.y = 1;
 
-    // this.game.world.scale.x = 2;
-    // this.game.world.scale.y = 2;
     //physics system
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     
