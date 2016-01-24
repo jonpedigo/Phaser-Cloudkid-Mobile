@@ -55,20 +55,19 @@ TopDownGame.Game.prototype = {
     //the first parameter is the tileset name as specified in Tiled, the second is the key to the asset
     this.map.addTilesetImage('tiles', 'gameTiles');
 
-    console.log(this.map)
-
-    var finder = new PF.AStarFinder();
-
-
     //create layer
     this.backgroundlayer = this.map.createLayer('backgroundLayer');
-    this.blockedLayer = this.map.createLayer('blockedLayer');
 
+    ////!!!!!!!!!!!!!!!!!!!   example Pathfinding set up code starts here
+    var finder = new PF.AStarFinder();
 
     //collision on blockedLayer
+    this.blockedLayer = this.map.createLayer('blockedLayer');
     this.map.setCollisionBetween(1, 2000, true, 'blockedLayer');
 
     //format tiled data for Pathfinding.js
+    //if its not working its probably because its the wrong index being passed into this.map.layers[].
+    //if you have more than two layers, make it this.map.layers[2];
     var collisionsMap = this.map.layers[1].data.map(function(a){
         return a.map(function(elem){
           if(elem.collideUp || elem.collideDown || elem.collideLeft || elem.collideRight) return 1; 
@@ -77,20 +76,13 @@ TopDownGame.Game.prototype = {
     })
 
     this.collisionsMap = collisionsMap;
-    console.log(this.collisionsMap);
-
-var matrix = [
-    [0, 0, 0, 1, 0],
-    [1, 0, 0, 0, 1],
-    [0, 0, 1, 0, 0],
-];
-
-  console.log(matrix);
     var grid = new PF.Grid(collisionsMap);
+    var optimalPath = finder.findPath(1, 2, 4, 2, grid);
 
-    console.log(grid);
+    console.log(optimalPath) //an array of grid coordinates
 
-    console.log( finder.findPath(1, 2, 4, 2, grid) ) ;
+    ///////!!!!!!!!!!!!!!!  example Pathfinding set up ends here
+
 
     //resizes the game world to match the layer dimensions
     this.backgroundlayer.resizeWorld();
