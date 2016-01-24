@@ -55,14 +55,42 @@ TopDownGame.Game.prototype = {
     //the first parameter is the tileset name as specified in Tiled, the second is the key to the asset
     this.map.addTilesetImage('tiles', 'gameTiles');
 
-    console.log(this.map);
+    console.log(this.map)
+
+    var finder = new PF.AStarFinder();
+
 
     //create layer
     this.backgroundlayer = this.map.createLayer('backgroundLayer');
     this.blockedLayer = this.map.createLayer('blockedLayer');
 
+
     //collision on blockedLayer
     this.map.setCollisionBetween(1, 2000, true, 'blockedLayer');
+
+    //format tiled data for Pathfinding.js
+    var collisionsMap = this.map.layers[1].data.map(function(a){
+        return a.map(function(elem){
+          if(elem.collideUp || elem.collideDown || elem.collideLeft || elem.collideRight) return 1; 
+          else return 0;
+        })
+    })
+
+    this.collisionsMap = collisionsMap;
+    console.log(this.collisionsMap);
+
+var matrix = [
+    [0, 0, 0, 1, 0],
+    [1, 0, 0, 0, 1],
+    [0, 0, 1, 0, 0],
+];
+
+  console.log(matrix);
+    var grid = new PF.Grid(collisionsMap);
+
+    console.log(grid);
+
+    console.log( finder.findPath(1, 2, 4, 2, grid) ) ;
 
     //resizes the game world to match the layer dimensions
     this.backgroundlayer.resizeWorld();
@@ -220,6 +248,8 @@ TopDownGame.Game.prototype = {
       });
   },
   update: function() {
+
+
     //collision
     this.game.physics.arcade.collide(this.player, this.blockedLayer);
     this.game.physics.arcade.overlap(this.player, this.items, this.collect, null, this);
